@@ -108,9 +108,9 @@ const App = () => {
 
   const features = [
     { icon: <Clock className="w-8 h-8 text-blue-500" />, title: "365일 24시간", desc: "주말/야간 긴급출동 대기" },
-    { icon: <MapPin className="w-8 h-8 text-blue-500" />, title: "신속한 방문", desc: "광주 전지역</p> 30분~1시간 출동" },
+    { icon: <MapPin className="w-8 h-8 text-blue-500" />, title: "신속한 방문", desc: "광주 전지역</p>30분~1시간 출동" },
     { icon: <Search className="w-8 h-8 text-blue-500" />, title: "최신장비 보유", desc: "배관내시경, 관로탐지기 등" },
-    { icon: <ShieldCheck className="w-8 h-8 text-blue-500" />, title: "책임 해결", desc: "타업체 실패 현장</p> 100% 해결" }
+    { icon: <ShieldCheck className="w-8 h-8 text-blue-500" />, title: "책임 해결", desc: "타업체 실패 현장</p>100% 해결" }
   ];
 
   const services = [
@@ -290,7 +290,7 @@ const App = () => {
           <div className="bg-white rounded-[3.5rem] shadow-2xl p-8 md:p-16 border border-slate-200">
             <Bot size={48} className="mx-auto text-blue-600 mb-6" />
             <h2 className="text-3xl md:text-4xl font-black mb-6">✨ AI 3초 증상 진단</h2>
-            <p className="text-slate-600 mb-10 text-lg font-medium">증상을 입력하면 AI가 </p><span className="text-red-500 font-black">원인과 응급조치</span>를 즉시 알려드립니다.</p>
+            <p className="text-slate-600 mb-10 text-lg font-medium">증상을 입력하면 AI가 <span className="text-red-500 font-black">원인과 응급조치</span>를 즉시 알려드립니다.</p>
             <div className="flex flex-col gap-4 max-w-2xl mx-auto">
               <textarea 
                 className="w-full bg-slate-50 border-2 border-slate-200 rounded-3xl p-6 text-lg focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-inner"
