@@ -108,35 +108,36 @@ const App = () => {
 
   const features = [
     { icon: <Clock className="w-8 h-8 text-blue-500" />, title: "365일 24시간", desc: "주말/야간 긴급출동 대기" },
-    { icon: <MapPin className="w-8 h-8 text-blue-500" />, title: "신속한 방문", desc: "광주 전지역</p>30분~1시간 출동" },
+    { icon: <MapPin className="w-8 h-8 text-blue-500" />, title: "신속한 방문", desc: "광주 전지역 30분~1시간 출동" },
     { icon: <Search className="w-8 h-8 text-blue-500" />, title: "최신장비 보유", desc: "배관내시경, 관로탐지기 등" },
-    { icon: <ShieldCheck className="w-8 h-8 text-blue-500" />, title: "책임 해결", desc: "타업체 실패 현장</p>100% 해결" }
+    { icon: <ShieldCheck className="w-8 h-8 text-blue-500" />, title: "책임 해결", desc: "타업체 실패 현장 100% 해결" }
   ];
 
+  // 수정: 아이콘 크기를 반응형으로 변경 (모바일 w-8, PC w-10)
   const services = [
     {
       title: "누수 탐지 및 공사",
       desc: "원인 모를 누수, 최신 청음/가스 탐지기로 정확히 찾아냅니다.",
-      tags: ["미세누수", "배관누수", "천장누수", "누수보험처리(일상배상)"],
-      icon: <Droplets className="w-10 h-10 text-cyan-500" />
+      tags: ["미세누수", "배관누수", "천장누수", "누수보험처리"],
+      icon: <Droplets className="w-8 h-8 md:w-10 md:h-10 text-cyan-500" />
     },
     {
       title: "하수구 및 변기 막힘",
       desc: "단순 뚫기가 아닌 내시경 카메라로 근본 원인을 제거합니다.",
-      tags: ["변기/싱크대 막힘", "하수구/배관 막힘", "악취 제거", "역류 해결"],
-      icon: <Wrench className="w-10 h-10 text-blue-500" />
+      tags: ["변기/싱크대", "하수구/배관", "악취 제거", "역류 해결"],
+      icon: <Wrench className="w-8 h-8 md:w-10 md:h-10 text-blue-500" />
     },
     {
       title: "고압세척 및 준설",
       desc: "기름 슬러지, 시멘트 등 굳어버린 배관을 새것처럼 청소합니다.",
-      tags: ["상가/식당 배관", "오수관/우수관", "공장/아파트 메인관", "특수청소"],
-      icon: <AlertTriangle className="w-10 h-10 text-red-500" />
+      tags: ["상가/식당", "오수관/우수관", "공장/아파트", "특수청소"],
+      icon: <AlertTriangle className="w-8 h-8 md:w-10 md:h-10 text-red-500" />
     },
     {
       title: "방수 및 종합 설비",
       desc: "오랜 노하우로 물 한 방울 새지 않는 완벽한 시공을 약속합니다.",
-      tags: ["화장실 방수", "옥상 방수", "각종 배관 공사", "수전/도기 교체"],
-      icon: <ShieldCheck className="w-10 h-10 text-emerald-500" />
+      tags: ["화장실 방수", "옥상 방수", "배관 공사", "수전 교체"],
+      icon: <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-emerald-500" />
     }
   ];
 
@@ -327,7 +328,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* 전문분야 (Services) 섹션 복구 */}
+      {/* 전문분야 (Services) 섹션 */}
       <section id="services" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -336,19 +337,20 @@ const App = () => {
             <p className="text-slate-500 text-lg font-medium">가정집부터 상가, 공장까지 규모와 증상에 맞는 맞춤형 첨단 장비가 투입됩니다.</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* 수정: 모바일 2열(grid-cols-2), PC 2열(md:grid-cols-2) */}
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8">
             {services.map((service, idx) => (
-              <div key={idx} className="bg-slate-50 p-8 rounded-[2.5rem] hover:bg-blue-50 transition-colors duration-300 border border-slate-100 group">
-                <div className="flex items-start gap-6">
-                  <div className="bg-white p-4 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div key={idx} className="bg-slate-50 p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] hover:bg-blue-50 transition-colors duration-300 border border-slate-100 group">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-6 text-center md:text-left">
+                  <div className="bg-white p-3 md:p-4 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
                     {service.icon}
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-black mb-3 text-slate-900">{service.title}</h3>
-                    <p className="text-slate-600 mb-4 font-medium leading-relaxed">{service.desc}</p>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="w-full">
+                    <h3 className="text-sm md:text-2xl font-black mb-2 md:mb-3 text-slate-900 break-keep">{service.title}</h3>
+                    <p className="text-xs md:text-base text-slate-600 mb-3 md:mb-4 font-medium leading-relaxed break-keep line-clamp-3 md:line-clamp-none">{service.desc}</p>
+                    <div className="flex flex-wrap justify-center md:justify-start gap-1.5 md:gap-2">
                       {service.tags.map((tag, i) => (
-                        <span key={i} className="bg-white text-blue-600 px-3 py-1 rounded-lg text-xs font-bold border border-blue-100 shadow-sm">
+                        <span key={i} className="bg-white text-blue-600 px-2 py-0.5 md:px-3 md:py-1 rounded-md md:rounded-lg text-[10px] md:text-xs font-bold border border-blue-100 shadow-sm">
                           #{tag}
                         </span>
                       ))}
@@ -397,6 +399,7 @@ const App = () => {
                     <h4 className="text-sm md:text-xl font-black text-slate-900 mb-2 md:mb-3 leading-tight">{item.title}</h4>
                     <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-medium line-clamp-2 md:line-clamp-none">{item.desc}</p>
                   </div>
+                  {/* 삭제: Verified Service 영역 제거 */}
                 </div>
               </div>
             ))}
@@ -459,6 +462,7 @@ const App = () => {
               <span>상호 : 진설비</span>
               <span>대표 : 박호진</span>
               <span>사업자번호 : 168-04-02622</span>
+              {/* 수정: 관리자 버튼 삭제 */}
             </div>
             <div className="opacity-30 uppercase tracking-[0.2em]">© 2026 Jin Seolbi. All Rights Reserved.</div>
           </div>
@@ -480,7 +484,7 @@ const App = () => {
         </div>
       </div>
 
-      {/* 관리자 대시보드 모달 */}
+      {/* 관리자 대시보드 모달 (버튼은 삭제되었으나 로직은 유지) */}
       {isAdminMode && (
         <div className="fixed inset-0 z-[200] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
           <div className="bg-white rounded-[3.5rem] p-8 md:p-14 w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-500 overflow-hidden">
