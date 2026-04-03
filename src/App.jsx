@@ -87,25 +87,25 @@ const App = () => {
   const services = [
     {
       title: "누수 탐지 및 공사",
-      desc: "원인 모를 누수, <br className="block"/>최신 청음/가스 탐지기로 <br className="block"/>정확히 찾아냅니다.",
+      desc: <>원인 모를 누수 <br /> 최신 청음/가스 탐지기로 <br />정확히 찾아냅니다.</>,
       tags: ["아파트누수", "미세누수", "배관누수", "천장누수", "누수보험처리"],
       icon: <Droplets className="w-8 h-8 md:w-10 md:h-10 text-cyan-500" />
     },
     {
       title: "하수구 및 변기 막힘",
-      desc: "단순 뚫기가 아닌 <br className="block"/>내시경 카메라로 <br className="block"/>근본 원인을 제거합니다.",
+      desc: <>단순 뚫기가 아닌 <br />내시경 카메라로<br /> 근본 원인을 제거합니다.</>,
       tags: ["변기/싱크대", "하수구/배관", "악취 제거", "역류 해결"],
       icon: <Wrench className="w-8 h-8 md:w-10 md:h-10 text-blue-500" />
     },
     {
       title: "고압세척 및 준설",
-      desc: "기름 슬러지, 시멘트 등 <br className="block"/>굳어버린 배관을 <br className="block"/>새것처럼 청소합니다.",
+      desc: <>기름 슬러지, 시멘트 등 <br />굳어버린 배관을 <br />새것처럼 청소합니다.</>,
       tags: ["상가/식당", "오수관/우수관", "공장/아파트", "특수청소"],
       icon: <AlertTriangle className="w-8 h-8 md:w-10 md:h-10 text-red-500" />
     },
     {
       title: "방수 및 종합 설비",
-      desc: "오랜 노하우로 <br className="block"/>물 한 방울 새지 않는 <br className="block"/>완벽한 시공을 약속합니다.",
+      desc: <>오랜 노하우로 <br />물 한 방울 새지 않는 <br />완벽한 시공을 약속합니다.</>,
       tags: ["화장실 방수", "옥상 방수", "배관 공사", "수전 교체"],
       icon: <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-emerald-500" />
     }
@@ -113,7 +113,7 @@ const App = () => {
 
   const beforeAfter = [
     { 
-      title: "식당 주방 바닥 그리스트랩 막힘 해결", 
+      title: <>식당 주방 바닥 <br />그리스트랩 막힘 해결</>, 
       desc: "기름때로 꽉 막힌 배관을 스케일링 및 석션 장비로 완벽 복원",
       beforeImg: "/b1.jpg", 
       afterImg: "/a1.jpg" 
@@ -125,7 +125,7 @@ const App = () => {
       afterImg: "/a2.jpg" 
     },
     { 
-      title: "화장실 변기 오수관 역류 해결", 
+      title: <>화장실 변기 오수관 <br />역류 해결</>, 
       desc: "배관 스케일링 작업 진행. 내시경 확인 후 시멘트 및 이물질 완벽 제거",
       beforeImg: "/b3.jpg", 
       afterImg: "/a3.jpg" 
