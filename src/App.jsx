@@ -87,25 +87,25 @@ const App = () => {
   const services = [
     {
       title: "누수 탐지 및 공사",
-      desc: "원인 모를 누수, 최신 청음/가스 탐지기로 정확히 찾아냅니다.",
+      desc: "원인 모를 누수, <br className="block"/>최신 청음/가스 탐지기로 <br className="block"/>정확히 찾아냅니다.",
       tags: ["아파트누수", "미세누수", "배관누수", "천장누수", "누수보험처리"],
       icon: <Droplets className="w-8 h-8 md:w-10 md:h-10 text-cyan-500" />
     },
     {
       title: "하수구 및 변기 막힘",
-      desc: "단순 뚫기가 아닌 내시경 카메라로 근본 원인을 제거합니다.",
+      desc: "단순 뚫기가 아닌 <br className="block"/>내시경 카메라로 <br className="block"/>근본 원인을 제거합니다.",
       tags: ["변기/싱크대", "하수구/배관", "악취 제거", "역류 해결"],
       icon: <Wrench className="w-8 h-8 md:w-10 md:h-10 text-blue-500" />
     },
     {
       title: "고압세척 및 준설",
-      desc: "기름 슬러지, 시멘트 등 굳어버린 배관을 새것처럼 청소합니다.",
+      desc: "기름 슬러지, 시멘트 등 <br className="block"/>굳어버린 배관을 <br className="block"/>새것처럼 청소합니다.",
       tags: ["상가/식당", "오수관/우수관", "공장/아파트", "특수청소"],
       icon: <AlertTriangle className="w-8 h-8 md:w-10 md:h-10 text-red-500" />
     },
     {
       title: "방수 및 종합 설비",
-      desc: "오랜 노하우로 물 한 방울 새지 않는 완벽한 시공을 약속합니다.",
+      desc: "오랜 노하우로 <br className="block"/>물 한 방울 새지 않는 <br className="block"/>완벽한 시공을 약속합니다.",
       tags: ["화장실 방수", "옥상 방수", "배관 공사", "수전 교체"],
       icon: <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-emerald-500" />
     }
@@ -216,7 +216,7 @@ const App = () => {
           <div className="text-center mb-16">
             <span className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-3 block">Our Services</span>
             <h2 className="text-3xl md:text-5xl font-black mb-6 text-slate-900">어떤 문제가 발생했나요?</h2>
-            <p className="text-slate-500 text-lg font-medium">아파트부터 가정집, 상가, 공장까지 규모와 증상에 맞는 맞춤형 첨단 장비가 투입됩니다.</p>
+            <p className="text-slate-500 text-lg font-medium">아파트부터 가정집, 상가, 공장까지 <br className="block"/>규모와 증상에 맞는 <br className="block"/>맞춤형 첨단 장비가 투입됩니다.</p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8">
@@ -247,7 +247,7 @@ const App = () => {
       <section id="portfolio" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight text-slate-900 text-shadow-sm">눈으로 확인하는 결과</h2>
-          <p className="text-slate-500 mb-16 text-lg font-medium">수백 건의 현장 데이터가 증명하는 진설비의 확실한 기술력</p>
+          <p className="text-slate-500 mb-16 text-lg font-medium">수백 건의 현장 데이터가 증명하는 <br className="block"/>진설비의 확실한 기술력</p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8 text-left">
             {beforeAfter.map((item, idx) => (
               <div key={idx} className="bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full group">
@@ -296,8 +296,8 @@ const App = () => {
             '일상배상책임보험' 완벽 지원
           </h2>
           <p className="text-blue-50 text-lg md:text-xl font-medium mb-12 max-w-3xl mx-auto leading-relaxed">
-            아래층 피해 보상부터 공사 비용까지, 고객님이 가입하신 보험 특약으로 혜택을 받으실 수 있도록 
-            <strong className="text-yellow-300 ml-1"> 필요한 모든 서류(소견서, 견적서, 시공사진)를 꼼꼼하게 지원</strong>해 드립니다.
+            아래층 피해 보상부터 공사 비용까지, <br className="block"/>고객님이 가입하신 보험 특약으로<br className="block"/> 혜택을 받으실 수 있도록 <br className="block"/>
+            <strong className="text-yellow-300 ml-1"> 필요한 모든 서류(소견서, 견적서, 시공사진)를 <br className="block"/>꼼꼼하게 지원</strong>해 드립니다.
           </p>
           <a href={`tel:${phoneNumber}`} className="inline-flex bg-white text-blue-700 px-10 py-5 rounded-2xl font-black text-xl hover:bg-slate-100 transition shadow-2xl active:scale-95">
             보험 처리 가능 여부 상담
