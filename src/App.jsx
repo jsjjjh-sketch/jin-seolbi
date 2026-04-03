@@ -172,14 +172,14 @@ const App = () => {
             재발 없는 시공을 약속합니다
           </p>
 
-          {/* 수정: 노란색 강조 박스 내 이미지 추가 */}
+          {/* 수정 완료: map.png 확장자로 업데이트 */}
           <div className="w-full max-w-2xl bg-yellow-400 text-slate-950 p-6 md:p-8 rounded-2xl mb-12 shadow-2xl border-4 border-yellow-300 animate-in fade-in zoom-in duration-700">
             <div className="flex flex-col gap-4 text-center">
-              {/* 이미지 삽입부 (배경 흰색 제거를 위해 mix-blend-multiply 권장) */}
               <img 
-                src="/map.jpg" 
+                src="/map.png" 
                 alt="광주 전지역 출동 지도" 
                 className="w-full max-w-[320px] mx-auto mb-2 rounded-xl mix-blend-multiply"
+                onError={(e) => { e.target.style.display = 'none'; }}
               />
               <div className="flex flex-col">
                 <span className="text-xl md:text-2xl font-black leading-tight">✅ 365일 24시간 긴급상담, 긴급출동</span>
@@ -188,7 +188,7 @@ const App = () => {
               <div className="h-px bg-slate-900/10 w-2/3 mx-auto"></div>
               <span className="text-xl md:text-2xl font-black">✅ 출장비 0원, 미해결시 0원</span>
               <div className="h-px bg-slate-900/10 w-2/3 mx-auto"></div>
-              <span className="text-xl md:text-2xl font-black">✅ 1,000건 이상 해결한 전문가 출동</span>
+              <span className="text-xl md:text-2xl font-black">✅ 1,000건 이상 해결한 베테랑 전문가 출동</span>
             </div>
           </div>
 
@@ -216,7 +216,7 @@ const App = () => {
           <div className="text-center mb-16">
             <span className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-3 block">Our Services</span>
             <h2 className="text-3xl md:text-5xl font-black mb-6 text-slate-900">어떤 문제가 발생했나요?</h2>
-            <p className="text-slate-500 text-lg font-medium">가정집부터 상가, 공장까지 규모와 증상에 맞는 맞춤형 첨단 장비가 투입됩니다.</p>
+            <p className="text-slate-500 text-lg font-medium">아파트부터 가정집, 상가, 공장까지 규모와 증상에 맞는 맞춤형 첨단 장비가 투입됩니다.</p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8">
