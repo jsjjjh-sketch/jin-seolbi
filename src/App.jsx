@@ -177,7 +177,7 @@ const App = () => {
             <div className="flex flex-col gap-4 text-center">
               {/* 이미지 삽입부 (배경 흰색 제거를 위해 mix-blend-multiply 권장) */}
               <img 
-                src="/Gemini_Generated_Image_4j7e994j7e994j7e.jpg" 
+                src="/map.jpg" 
                 alt="광주 전지역 출동 지도" 
                 className="w-full max-w-[320px] mx-auto mb-2 rounded-xl mix-blend-multiply"
               />
@@ -188,7 +188,7 @@ const App = () => {
               <div className="h-px bg-slate-900/10 w-2/3 mx-auto"></div>
               <span className="text-xl md:text-2xl font-black">✅ 출장비 0원, 미해결시 0원</span>
               <div className="h-px bg-slate-900/10 w-2/3 mx-auto"></div>
-              <span className="text-xl md:text-2xl font-black">✅ 1,000건 이상 해결한 베테랑 전문가 출동</span>
+              <span className="text-xl md:text-2xl font-black">✅ 1,000건 이상 해결한 전문가 출동</span>
             </div>
           </div>
 
