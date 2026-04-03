@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
-import { getFirestore, collection, addDoc, onSnapshot } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { 
   Phone, 
   Droplets, 
@@ -13,16 +13,11 @@ import {
   CheckCircle2, 
   AlertTriangle,
   MapPin, 
-  FileText,
-  Sparkles,
-  Bot,
-  Loader2,
-  Lock
+  FileText
 } from 'lucide-react';
 
 /**
  * [환경 변수 안전 로드 함수]
- * Vite 환경 변수(import.meta.env)가 지원되지 않는 환경에서 발생하는 오류를 방지합니다.
  */
 const getEnv = (key) => {
   try {
@@ -42,9 +37,7 @@ const firebaseConfig = {
   appId: getEnv('VITE_FIREBASE_APP_ID')
 };
 
-// Canvas 환경 전용 폴백
 const finalConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'jin-seolbi-production';
 
 let app, auth, db;
 try {
@@ -57,17 +50,8 @@ try {
 
 const App = () => {
   const [scrolled, setScrolled] = useState(false);
-  const phoneNumber = "010-8678-0965";
-
   const [user, setUser] = useState(null);
-  const [isAdminMode, setIsAdminMode] = useState(false);
-  const [logs, setLogs] = useState([]);
-  const [aiInput, setAiInput] = useState("");
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [aiResult, setAiResult] = useState(null);
-  const [aiError, setAiError] = useState("");
-
-  const geminiApiKey = getEnv('VITE_GEMINI_API_KEY'); 
+  const phoneNumber = "010-8678-0965";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -93,32 +77,18 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!isAdminMode || !user || !db) return;
-    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'consultations');
-    const unsubscribe = onSnapshot(colRef, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      setLogs(data);
-    }, (error) => {
-      console.error("Fetch Error:", error);
-    });
-    return () => unsubscribe();
-  }, [isAdminMode, user]);
-
   const features = [
     { icon: <Clock className="w-8 h-8 text-blue-500" />, title: "365일 24시간", desc: "주말/야간 긴급출동 대기" },
-    { icon: <MapPin className="w-8 h-8 text-blue-500" />, title: "신속한 방문", desc: "광주 전지역 30분~1시간 출동" },
+    { icon: <MapPin className="w-8 h-8 text-blue-500" />, title: "신속한 방문", desc: "광주 전지역 30분 출동" },
     { icon: <Search className="w-8 h-8 text-blue-500" />, title: "최신장비 보유", desc: "배관내시경, 관로탐지기 등" },
     { icon: <ShieldCheck className="w-8 h-8 text-blue-500" />, title: "책임 해결", desc: "타업체 실패 현장 100% 해결" }
   ];
 
-  // 수정: 아이콘 크기를 반응형으로 변경 (모바일 w-8, PC w-10)
   const services = [
     {
       title: "누수 탐지 및 공사",
       desc: "원인 모를 누수, 최신 청음/가스 탐지기로 정확히 찾아냅니다.",
-      tags: ["미세누수", "배관누수", "천장누수", "누수보험처리"],
+      tags: ["아파트누수", "미세누수", "배관누수", "천장누수", "누수보험처리"],
       icon: <Droplets className="w-8 h-8 md:w-10 md:h-10 text-cyan-500" />
     },
     {
@@ -162,85 +132,18 @@ const App = () => {
     }
   ];
 
-  const fetchWithRetry = async (url, options, retries = 5) => {
-    const delays = [1000, 2000, 4000, 8000, 16000];
-    for (let i = 0; i < retries; i++) {
-      try {
-        const response = await fetch(url, options);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return await response.json();
-      } catch (error) {
-        if (i === retries - 1) throw error;
-        await new Promise(res => setTimeout(res, delays[i]));
-      }
-    }
-  };
-
-  const handleAiDiagnosis = async () => {
-    if (!geminiApiKey && typeof __app_id === 'undefined') {
-      alert("시스템 오류: AI API 키가 설정되지 않았습니다. 관리자에게 문의해주세요. (Vercel 설정 확인 필요)");
-      return;
-    }
-
-    if (!aiInput.trim()) return;
-    setIsAiLoading(true);
-    setAiResult(null);
-    setAiError("");
-
-    const prompt = `고객 증상: "${aiInput}". 광주 '진설비'의 AI 전문가로서 원인, 긴급도, 응급조치, 신뢰 멘트를 분석해줘.`;
-    const payload = {
-      contents: [{ parts: [{ text: prompt }] }],
-      systemInstruction: { parts: [{ text: "너는 광주 '진설비'의 전문 상담 AI야. 친절하고 신속한 해결을 유도해." }] },
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            cause: { type: "STRING" },
-            urgency: { type: "STRING" },
-            action: { type: "STRING" },
-            summary: { type: "STRING" }
-          }
-        }
-      }
-    };
-
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`;
-      const data = await fetchWithRetry(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (resultText) {
-        const parsed = JSON.parse(resultText);
-        setAiResult(parsed);
-        if (user && db) {
-          try {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'consultations'), {
-              symptom: aiInput, result: parsed, timestamp: new Date().toISOString(), userId: user.uid
-            });
-          } catch(e) { console.error("DB Save Failed", e); }
-        }
-      }
-    } catch (e) {
-      setAiError("AI 분석 중 오류가 발생했습니다. 잠시 후 다시 시도하거나 직접 전화 문의 부탁드립니다.");
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 md:pb-0">
       <div className="bg-red-600 text-white text-sm font-bold py-2 text-center px-4 animate-pulse sticky top-0 z-[60]">
-        🚨 광주 전지역 30분~1시간 빠른 출동! 🚨
+        🚨 전지역 27분 빠른 출동! 🚨
       </div>
 
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3 top-0' : 'bg-white/95 py-4 top-9'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex flex-col cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-            <span className="text-2xl font-black text-blue-700 tracking-tight">진설비</span>
-            <span className="text-[10px] text-slate-500 font-bold -mt-1 uppercase tracking-wider">Professional Plumbing</span>
+            <span className="text-2xl font-black text-blue-700 tracking-tight">진설비</span>      
           </div>
           <div className="hidden md:flex space-x-8 font-bold text-slate-700 text-sm">
-            <a href="#ai-diagnosis" className="hover:text-blue-600 flex items-center"><Sparkles className="w-4 h-4 mr-1 text-yellow-500" /> AI진단</a>
             <a href="#services" className="hover:text-blue-600">전문분야</a>
             <a href="#portfolio" className="hover:text-blue-600">시공사례</a>
             <a href="#insurance" className="hover:text-blue-600">누수보험</a>
@@ -262,12 +165,33 @@ const App = () => {
             <span>막힌 곳은 <span className="text-blue-400">시원하게</span></span>
             <span>새는 곳은 <span className="text-red-400">완벽하게</span></span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed font-medium break-keep text-center">
+          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed font-medium break-keep text-center">
             최신 배관내시경, 고압세척기, 관로탐지기<br className="block"/>
             100% 자체 보유<br className="block"/>
             단순 뚫기가 아닌 근본 원인을 찾아<br className="block"/>
             재발 없는 시공을 약속합니다
           </p>
+
+          {/* 수정: 노란색 강조 박스 내 이미지 추가 */}
+          <div className="w-full max-w-2xl bg-yellow-400 text-slate-950 p-6 md:p-8 rounded-2xl mb-12 shadow-2xl border-4 border-yellow-300 animate-in fade-in zoom-in duration-700">
+            <div className="flex flex-col gap-4 text-center">
+              {/* 이미지 삽입부 (배경 흰색 제거를 위해 mix-blend-multiply 권장) */}
+              <img 
+                src="/Gemini_Generated_Image_4j7e994j7e994j7e.jpg" 
+                alt="광주 전지역 출동 지도" 
+                className="w-full max-w-[320px] mx-auto mb-2 rounded-xl mix-blend-multiply"
+              />
+              <div className="flex flex-col">
+                <span className="text-xl md:text-2xl font-black leading-tight">✅ 365일 24시간 긴급상담, 긴급출동</span>
+                <span className="text-sm md:text-base font-bold opacity-80 mt-1">(새벽 문의도 OK)</span>
+              </div>
+              <div className="h-px bg-slate-900/10 w-2/3 mx-auto"></div>
+              <span className="text-xl md:text-2xl font-black">✅ 출장비 0원, 미해결시 0원</span>
+              <div className="h-px bg-slate-900/10 w-2/3 mx-auto"></div>
+              <span className="text-xl md:text-2xl font-black">✅ 1,000건 이상 해결한 베테랑 전문가 출동</span>
+            </div>
+          </div>
+
           <a href={`tel:${phoneNumber}`} className="w-full max-w-md bg-red-600 text-white px-8 py-5 rounded-2xl font-black text-xl hover:bg-red-700 transition flex items-center justify-center shadow-2xl shadow-red-600/30">
             <Phone className="mr-3 w-6 h-6 animate-bounce" /> 긴급 출동 전화 연결
           </a>
@@ -286,48 +210,6 @@ const App = () => {
         </div>
       </section>
 
-      <section id="ai-diagnosis" className="py-24 bg-slate-100">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="bg-white rounded-[3.5rem] shadow-2xl p-8 md:p-16 border border-slate-200">
-            <Bot size={48} className="mx-auto text-blue-600 mb-6" />
-            <h2 className="text-3xl md:text-4xl font-black mb-6">✨ AI 3초 증상 진단</h2>
-            <p className="text-slate-600 mb-10 text-lg font-medium">증상을 입력하면 AI가 <span className="text-red-500 font-black">원인과 응급조치</span>를 즉시 알려드립니다.</p>
-            <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-              <textarea 
-                className="w-full bg-slate-50 border-2 border-slate-200 rounded-3xl p-6 text-lg focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-inner"
-                rows="3" placeholder="예: 싱크대 물이 안 내려가고 바닥으로 역류해요."
-                value={aiInput} onChange={(e) => setAiInput(e.target.value)}
-              />
-              <button 
-                onClick={handleAiDiagnosis} disabled={isAiLoading || !aiInput.trim()}
-                className="w-full bg-slate-900 text-white font-black text-xl py-5 rounded-2xl hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl"
-              >
-                {isAiLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="text-yellow-400" />}
-                {isAiLoading ? "분석 중..." : "AI 무료 진단 시작하기"}
-              </button>
-            </div>
-            {aiResult && (
-              <div className="mt-12 text-left bg-blue-50/50 border border-blue-100 rounded-[2.5rem] p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="mb-6">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold mb-2 inline-block uppercase tracking-tighter">AI Analysis</span>
-                  <h3 className="text-2xl font-black text-blue-900">{aiResult.urgency}</h3>
-                </div>
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
-                  <div><h4 className="font-bold text-slate-500 text-sm mb-2 flex items-center gap-2"><Search size={16}/> 예상되는 원인</h4><p className="text-slate-900 font-bold leading-relaxed">{aiResult.cause}</p></div>
-                  <div><h4 className="font-bold text-red-500 text-sm mb-2 flex items-center gap-2"><AlertTriangle size={16}/> 긴급 응급 조치</h4><p className="text-slate-900 font-bold leading-relaxed">{aiResult.action}</p></div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl border border-blue-100 text-center shadow-sm">
-                  <p className="text-slate-800 font-bold mb-4">"{aiResult.summary}"</p>
-                  <a href={`tel:${phoneNumber}`} className="bg-blue-600 text-white w-full py-4 rounded-xl font-black flex items-center justify-center gap-2 hover:bg-blue-700 transition shadow-lg">
-                    <Phone size={20}/> 지금 즉시 출동 요청하기
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* 전문분야 (Services) 섹션 */}
       <section id="services" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -337,7 +219,6 @@ const App = () => {
             <p className="text-slate-500 text-lg font-medium">가정집부터 상가, 공장까지 규모와 증상에 맞는 맞춤형 첨단 장비가 투입됩니다.</p>
           </div>
           
-          {/* 수정: 모바일 2열(grid-cols-2), PC 2열(md:grid-cols-2) */}
           <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8">
             {services.map((service, idx) => (
               <div key={idx} className="bg-slate-50 p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] hover:bg-blue-50 transition-colors duration-300 border border-slate-100 group">
@@ -399,7 +280,6 @@ const App = () => {
                     <h4 className="text-sm md:text-xl font-black text-slate-900 mb-2 md:mb-3 leading-tight">{item.title}</h4>
                     <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-medium line-clamp-2 md:line-clamp-none">{item.desc}</p>
                   </div>
-                  {/* 삭제: Verified Service 영역 제거 */}
                 </div>
               </div>
             ))}
@@ -462,7 +342,6 @@ const App = () => {
               <span>상호 : 진설비</span>
               <span>대표 : 박호진</span>
               <span>사업자번호 : 168-04-02622</span>
-              {/* 수정: 관리자 버튼 삭제 */}
             </div>
             <div className="opacity-30 uppercase tracking-[0.2em]">© 2026 Jin Seolbi. All Rights Reserved.</div>
           </div>
@@ -472,74 +351,15 @@ const App = () => {
       {/* 모바일 하단 고정 버튼 (슬림 버전) */}
       <div className="fixed bottom-0 left-0 w-full z-[100] md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
         <div className="flex gap-2">
-          {/* 문자 버튼: 크기 축소, 여백 축소 */}
           <a href={`sms:${phoneNumber}`} className="w-[28%] bg-slate-50 text-slate-800 rounded-xl font-bold flex flex-col items-center justify-center py-2 active:scale-95 transition border border-slate-100">
             <span className="text-[10px] opacity-50 mb-0.5">SMS</span>
             <span className="text-sm">문자</span>
           </a>
-          {/* 전화 버튼: 높이 축소(py-3), 글자 크기 축소(text-lg) */}
           <a href={`tel:${phoneNumber}`} className="flex-1 bg-blue-600 text-white rounded-xl font-black flex items-center justify-center py-3 text-lg shadow-lg shadow-blue-200/50 animate-pulse active:scale-95 transition">
             <Phone className="mr-2 w-5 h-5"/> 빠른 전화 상담
           </a>
         </div>
       </div>
-
-      {/* 관리자 대시보드 모달 (버튼은 삭제되었으나 로직은 유지) */}
-      {isAdminMode && (
-        <div className="fixed inset-0 z-[200] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
-          <div className="bg-white rounded-[3.5rem] p-8 md:p-14 w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-500 overflow-hidden">
-            <div className="flex justify-between items-center mb-10 pb-8 border-b border-slate-100">
-              <div className="flex items-center gap-5">
-                <div className="bg-blue-600 text-white p-4 rounded-3xl shadow-lg shadow-blue-200">
-                  <Lock size={32} />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-black text-slate-950 tracking-tight">실시간 고객 상담 로그</h2>
-                  <p className="text-slate-400 font-bold text-sm mt-1">AI 증상 진단 기록을 바탕으로 더 정확한 상담을 진행하세요.</p>
-                </div>
-              </div>
-              <button onClick={() => setIsAdminMode(false)} className="bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-red-600 w-14 h-14 rounded-2xl font-black transition-all flex items-center justify-center">
-                ✕
-              </button>
-            </div>
-            <div className="overflow-y-auto flex-1 pr-4 space-y-8 scroll-smooth">
-              {logs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-32 text-slate-300 font-black">
-                  <Bot size={64} className="mb-6 opacity-20" />
-                  <p className="text-xl">아직 접수된 상담 내역이 없습니다.</p>
-                </div>
-              ) : (
-                logs.map(log => (
-                  <div key={log.id} className="bg-slate-50/50 border border-slate-100 p-8 rounded-[2.5rem] hover:bg-blue-50/30 transition-all duration-300 group">
-                    <div className="flex justify-between items-start mb-6">
-                      <span className="text-xs font-black text-slate-400 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-50">
-                        {new Date(log.timestamp).toLocaleString('ko-KR')}
-                      </span>
-                      <span className="bg-red-100 text-red-600 px-4 py-2 rounded-xl text-xs font-black border border-red-50">
-                        {log.result?.urgency || "진단 결과 없음"}
-                      </span>
-                    </div>
-                    <div className="mb-8">
-                      <h4 className="text-blue-600 font-black text-xs uppercase tracking-[0.1em] mb-3">Customer Input</h4>
-                      <p className="text-2xl font-black text-slate-900 leading-tight">"{log.symptom}"</p>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <span className="text-blue-600 font-black text-xs block mb-3 uppercase tracking-wider">● 예상 원인</span>
-                        <p className="text-slate-700 font-bold leading-relaxed">{log.result?.cause}</p>
-                      </div>
-                      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <span className="text-red-500 font-black text-xs block mb-3 uppercase tracking-wider">● 제안 조치</span>
-                        <p className="text-slate-700 font-bold leading-relaxed">{log.result?.action}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
